@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from.models import Task
 # Create your views here.
 def home(request):
@@ -25,3 +25,20 @@ def mark_undone(request, task_id):
     task.is_completed = False
     task.save()
     return redirect('home')
+def update_task(request, update_id):
+    get_task = get_object_or_404(Task, id=update_id)
+    if request.method == "POST":
+        updated_text = request.POST.get('task')
+        get_task.task = updated_text
+        get_task.save()
+        return redirect('home')
+    else:
+        context = {
+            'get_task': get_task
+        }
+        return render(request, 'update.html', context)
+def delete_task(request,delete_id):
+    delete_task = get_object_or_404(Task, id=delete_id)
+    delete_task.delete()
+    return redirect('/')
+    
